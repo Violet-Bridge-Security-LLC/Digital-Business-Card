@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Miguel (Mike) Prada — VBS Digital Identity</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,12 +11,11 @@
 <style>
 :root {
   /* VBS Corporate Palette */
-  --vbs-dark: #3D3D3D;   /* Back Face Background */
-  --vbs-white: #FFFFFF;  /* Main Text */
-  --vbs-violet: #7056A0; /* Accents & Buttons */
-  
-  --muted: #b0b0b0;      /* Secondary Text */
-  --link: #61afef;       /* Hyperlinks */
+  --vbs-dark: #3D3D3D;
+  --vbs-white: #FFFFFF;
+  --vbs-violet: #7056A0;
+  --muted: #b0b0b0;
+  --link: #61afef;
   
   /* Silver/White Gradient for Front Face */
   --front-bg-start: #ffffff;
@@ -27,24 +26,29 @@
 
 * { box-sizing: border-box; }
 
+/* Aseguramos que el cuerpo ocupe toda la pantalla y centramos */
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100vh; /* Usar height en lugar de min-height para evitar scroll en body */
+  height: -webkit-fill-available; /* Fix para iOS Safari */
   background: radial-gradient(circle at center, #2a2a2a, #111111);
   font-family: var(--mono);
   color: var(--vbs-white);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 15px; /* Un poco menos de padding externo */
   perspective: 1200px;
+  overflow: hidden; /* Evita scroll en la página principal */
 }
 
-/* --- 3D SCENE --- */
+/* --- 3D SCENE (Cambiado para ser responsivo) --- */
 .scene {
   width: 100%;
   max-width: 420px;
-  height: 680px;
+  /* ALTURA DINÁMICA: Usa 700px O el 88% de la altura de la pantalla, lo que sea menor. 
+     Esto asegura que quepa en iPhones con barras de Safari. */
+  height: min(700px, 88vh); 
   position: relative;
 }
 
@@ -66,12 +70,12 @@ body {
   inset: 0;
   backface-visibility: hidden;
   border-radius: 18px;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4); /* Sombra un poco más ajustada */
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* --- FRONT FACE (SILVER / LOGO) --- */
+/* --- FRONT FACE --- */
 .card-front {
   background: linear-gradient(135deg, var(--front-bg-start), var(--front-bg-end));
   display: flex;
@@ -81,21 +85,17 @@ body {
 }
 
 .logo-container {
-  width: 180px;
+  width: 160px; /* Ligeramente más pequeño para balancear */
   margin-bottom: 20px;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
 }
 
-.logo-img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
+.logo-img { width: 100%; height: auto; display: block; }
 
 .tap-hint {
   position: absolute;
-  bottom: 30px;
-  font-size: 11px;
+  bottom: 25px;
+  font-size: 10px;
   color: #555;
   font-weight: bold;
   opacity: 0.7;
@@ -106,7 +106,7 @@ body {
 
 @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 
-/* --- BACK FACE (CORPORATE VIOLETA/DARK) --- */
+/* --- BACK FACE --- */
 .card-back {
   transform: rotateY(180deg);
   background: var(--vbs-dark);
@@ -117,55 +117,51 @@ body {
 
 /* Validation Bar */
 .validation {
-  padding: 10px 20px;
+  padding: 8px 20px; /* Un poco menos de padding vertical */
   border-bottom: 1px solid rgba(255,255,255,0.1);
-  font-size: 10px;
+  font-size: 9px;
   color: var(--muted);
   background: rgba(0,0,0,0.2);
+  flex-shrink: 0; /* No encoger la barra de validación */
 }
 
 .progress {
-  margin-top: 5px;
-  height: 4px;
+  margin-top: 4px;
+  height: 3px;
   background: rgba(0,0,0,0.3);
   border-radius: 4px;
   overflow: hidden;
 }
 
-.progress-bar {
-  display: block;
-  height: 100%;
-  width: 0;
-  background: var(--vbs-violet);
-}
+.progress-bar { display: block; height: 100%; width: 0; background: var(--vbs-violet); }
 
-.animate-progress {
-  animation: loadBar 1.5s ease forwards;
-}
+.animate-progress { animation: loadBar 1.5s ease forwards; }
+@keyframes loadBar { 0% { width: 0; } 100% { width: 100%; } }
 
-@keyframes loadBar { 
-  0% { width: 0; }
-  100% { width: 100%; } 
-}
-
-/* Content Area */
+/* Content Area (Layout Flexible) */
 .content {
-  padding: 20px;
+  padding: 15px 20px; /* Padding reducido */
   overflow-y: auto;
-  flex: 1;
+  flex: 1; /* Ocupa el espacio restante */
   scrollbar-width: thin;
   scrollbar-color: var(--vbs-violet) var(--vbs-dark);
+  /* Usamos flex column y gap para espaciado dinámico */
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Espacio entre secciones flexible */
 }
 
-/* Header */
+/* Header (Foto y Nombre) */
 .header-grid {
   display: grid;
   grid-template-columns: 1fr 70px;
   gap: 15px;
   align-items: center;
-  margin-bottom: 20px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding-bottom: 15px;
+  padding-bottom: 12px;
+  /* IMPORTANTE: Evita que el header se encoja si falta espacio */
+  flex-shrink: 0; 
+  margin-bottom: 0; /* Eliminamos margen, usamos gap del padre */
 }
 
 .profile-pic {
@@ -177,20 +173,25 @@ body {
   background: #fff;
 }
 
-h1 { font-size: 17px; margin: 0; color: var(--vbs-white); }
+h1 { font-size: 17px; margin: 0; color: var(--vbs-white); line-height: 1.2; }
 .role { font-size: 11px; color: var(--vbs-violet); font-weight: bold; margin-top: 4px; }
 .company { font-size: 10px; color: var(--muted); }
 
 /* Certificate Sections */
-.cert-section { margin-bottom: 15px; }
+.cert-section { 
+    margin-bottom: 0; /* Eliminamos margen, usamos gap del padre */
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* Espacio entre líneas dentro de una sección */
+}
 .label { 
-  font-size: 10px; 
+  font-size: 9px; 
   color: var(--muted); 
   text-transform: uppercase; 
   letter-spacing: 1px;
-  margin-bottom: 4px;
   border-left: 2px solid var(--vbs-violet);
   padding-left: 6px;
+  margin-bottom: 2px;
 }
 
 .field-row {
@@ -198,7 +199,7 @@ h1 { font-size: 17px; margin: 0; color: var(--vbs-white); }
   grid-template-columns: 110px 1fr;
   gap: 5px;
   font-size: 11px;
-  margin-bottom: 4px;
+  line-height: 1.3; /* Mejor interlineado para ahorrar espacio */
 }
 
 .key { color: var(--muted); opacity: 0.8; }
@@ -208,21 +209,22 @@ h1 { font-size: 17px; margin: 0; color: var(--vbs-white); }
 /* Service Description Box */
 .service-text {
   font-size: 11px;
-  line-height: 1.4;
+  line-height: 1.35;
   color: #e0e0e0;
   background: rgba(112, 86, 160, 0.1);
-  padding: 10px;
+  padding: 8px 10px; /* Padding ligeramente reducido */
   border-radius: 6px;
   border: 1px solid rgba(112, 86, 160, 0.3);
-  margin-bottom: 15px;
+  margin-bottom: 0; /* Eliminamos margen */
 }
 
 /* Buttons */
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 8px; /* Gap reducido entre botones */
+  margin-top: 5px;
+  flex-shrink: 0; /* Intentar no encoger los botones */
 }
 .full-width { grid-column: span 2; }
 
@@ -230,7 +232,7 @@ h1 { font-size: 17px; margin: 0; color: var(--vbs-white); }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 10px; /* Padding de botón reducido de 12 a 10px */
   font-size: 11px;
   border-radius: 6px;
   border: 1px solid var(--vbs-violet);
@@ -249,19 +251,18 @@ h1 { font-size: 17px; margin: 0; color: var(--vbs-white); }
   box-shadow: 0 0 10px rgba(112, 86, 160, 0.5);
 }
 
-.btn-primary {
-  background: var(--vbs-violet);
-  color: #fff;
-}
+.btn-primary { background: var(--vbs-violet); color: #fff; }
 .btn-primary:hover { opacity: 0.9; }
 
 .fingerprint {
   font-size: 9px;
   color: var(--muted);
   text-align: center;
-  margin-top: 15px;
+  margin-top: auto; /* Empuja el fingerprint al final */
+  padding-top: 10px;
   font-family: monospace;
   opacity: 0.6;
+  flex-shrink: 0;
 }
 
 </style>
