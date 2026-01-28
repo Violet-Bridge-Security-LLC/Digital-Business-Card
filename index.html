@@ -3,21 +3,25 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Miguel Prada — Digital Identity</title>
+<title>Miguel (Mike) Prada — VBS Digital Identity</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --bg: #0b0e14;
-  --card: #121826;
-  --border: #283047;
-  --text: #e7ebf3;
-  --muted: #9aa4b2;
-  --accent: #6cf2c2;
-  --warning: #f2c96c;
-  --link: #61afef;
+  /* VBS Corporate Palette */
+  --vbs-dark: #3D3D3D;   /* Back Face Background */
+  --vbs-white: #FFFFFF;  /* Main Text */
+  --vbs-violet: #7056A0; /* Accents & Buttons */
+  
+  --muted: #b0b0b0;      /* Secondary Text */
+  --link: #61afef;       /* Hyperlinks */
+  
+  /* Silver/White Gradient for Front Face */
+  --front-bg-start: #ffffff;
+  --front-bg-end: #d9d9d9;
+
   --mono: "JetBrains Mono", Consolas, monospace;
 }
 
@@ -26,237 +30,360 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(900px 500px at 20% -10%, #182038, #090c12);
+  background: radial-gradient(circle at center, #2a2a2a, #111111);
   font-family: var(--mono);
-  color: var(--text);
+  color: var(--vbs-white);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  perspective: 1200px;
+}
+
+/* --- 3D SCENE --- */
+.scene {
+  width: 100%;
+  max-width: 420px;
+  height: 680px;
+  position: relative;
 }
 
 .card {
   width: 100%;
-  max-width: 420px;
-  background: linear-gradient(180deg, #151c2c, #0f1420);
-  border: 1px solid var(--border);
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+  cursor: pointer;
+}
+
+.card.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
   border-radius: 18px;
-  box-shadow: 0 40px 80px rgba(0,0,0,.6);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
   overflow: hidden;
-  animation: fadeIn .6s ease-out;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* --- FRONT FACE (SILVER / LOGO) --- */
+.card-front {
+  background: linear-gradient(135deg, var(--front-bg-start), var(--front-bg-end));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-/* HEADER & PHOTO */
-.header-grid {
-  display: grid;
-  grid-template-columns: 1fr 80px; /* Espacio para la foto */
-  gap: 15px;
-  align-items: start;
+.logo-container {
+  width: 180px;
   margin-bottom: 20px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
 }
 
-.profile-pic {
-  width: 80px;
-  height: 80px;
-  border-radius: 12px;
-  border: 2px solid var(--border);
-  object-fit: cover;
-  background: #000;
+.logo-img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-/* VALIDATION BAR */
-.validation {
-  padding: 10px 18px;
-  border-bottom: 1px solid var(--border);
+.tap-hint {
+  position: absolute;
+  bottom: 30px;
   font-size: 11px;
+  color: #555;
+  font-weight: bold;
+  opacity: 0.7;
+  animation: pulse 2s infinite;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+/* --- BACK FACE (CORPORATE VIOLETA/DARK) --- */
+.card-back {
+  transform: rotateY(180deg);
+  background: var(--vbs-dark);
+  color: var(--vbs-white);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Validation Bar */
+.validation {
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 10px;
   color: var(--muted);
   background: rgba(0,0,0,0.2);
 }
 
 .progress {
-  margin-top: 6px;
+  margin-top: 5px;
   height: 4px;
-  background: #0b0f1a;
+  background: rgba(0,0,0,0.3);
   border-radius: 4px;
   overflow: hidden;
 }
 
-.progress span {
+.progress-bar {
   display: block;
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, var(--accent), #9ff5d4);
-  animation: validate 1.5s ease forwards;
+  background: var(--vbs-violet);
 }
 
-@keyframes validate { to { width: 100%; } }
+.animate-progress {
+  animation: loadBar 1.5s ease forwards;
+}
 
-/* CONTENT */
+@keyframes loadBar { 
+  0% { width: 0; }
+  100% { width: 100%; } 
+}
+
+/* Content Area */
 .content {
-  padding: 24px;
-  animation: reveal .4s ease forwards;
-  animation-delay: 1.6s; /* Espera a que termine la barra */
-  opacity: 0;
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: var(--vbs-violet) var(--vbs-dark);
 }
 
-@keyframes reveal { to { opacity: 1; } }
+/* Header */
+.header-grid {
+  display: grid;
+  grid-template-columns: 1fr 70px;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 15px;
+}
 
-h1 { font-size: 18px; margin: 0 0 4px 0; color: var(--text); }
-.subtitle { font-size: 12px; color: var(--muted); margin: 0; }
+.profile-pic {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid var(--vbs-violet);
+  object-fit: cover;
+  background: #fff;
+}
 
-.section { margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.section:last-of-type { border-bottom: none; }
+h1 { font-size: 17px; margin: 0; color: var(--vbs-white); }
+.role { font-size: 11px; color: var(--vbs-violet); font-weight: bold; margin-top: 4px; }
+.company { font-size: 10px; color: var(--muted); }
 
-.label { font-size: 11px; color: var(--warning); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+/* Certificate Sections */
+.cert-section { margin-bottom: 15px; }
+.label { 
+  font-size: 10px; 
+  color: var(--muted); 
+  text-transform: uppercase; 
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  border-left: 2px solid var(--vbs-violet);
+  padding-left: 6px;
+}
 
-.kv {
+.field-row {
   display: grid;
   grid-template-columns: 110px 1fr;
-  gap: 6px 10px;
-  font-size: 12px;
-}
-
-.key { color: var(--muted); }
-.value { color: var(--text); }
-
-/* TAGS & BADGES */
-.tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tags span {
+  gap: 5px;
   font-size: 11px;
-  padding: 4px 8px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: rgba(255,255,255,0.03);
-  color: var(--text);
+  margin-bottom: 4px;
 }
 
-.partner-link {
-  color: var(--link);
-  text-decoration: none;
-  border-bottom: 1px dotted var(--link);
+.key { color: var(--muted); opacity: 0.8; }
+.value { color: var(--vbs-white); word-break: break-word; }
+.partner-link { color: var(--link); text-decoration: none; border-bottom: 1px dotted var(--link); }
+
+/* Service Description Box */
+.service-text {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #e0e0e0;
+  background: rgba(112, 86, 160, 0.1);
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(112, 86, 160, 0.3);
+  margin-bottom: 15px;
 }
 
-/* ACTIONS */
-.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-.actions .full-width { grid-column: span 2; }
+/* Buttons */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.full-width { grid-column: span 2; }
 
 .btn {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 12px;
-  font-size: 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  color: var(--text);
+  font-size: 11px;
+  border-radius: 6px;
+  border: 1px solid var(--vbs-violet);
+  color: var(--vbs-white);
   text-decoration: none;
-  background: rgba(255,255,255,0.02);
+  background: transparent;
   transition: all 0.2s;
   font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(108, 242, 194, 0.05); }
-.btn-primary { background: var(--accent); color: #0b0e14; border-color: var(--accent); }
-.btn-primary:hover { background: #9ff5d4; color: #0b0e14; opacity: 0.9; }
+.btn:hover {
+  background: var(--vbs-violet);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(112, 86, 160, 0.5);
+}
 
-/* FOOTER */
-.footer {
-  padding: 12px;
-  background: #0b0f1a;
-  border-top: 1px solid var(--border);
-  font-size: 10px;
+.btn-primary {
+  background: var(--vbs-violet);
+  color: #fff;
+}
+.btn-primary:hover { opacity: 0.9; }
+
+.fingerprint {
+  font-size: 9px;
   color: var(--muted);
   text-align: center;
-  font-family: var(--mono);
+  margin-top: 15px;
+  font-family: monospace;
+  opacity: 0.6;
 }
+
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="scene">
+  <div class="card" id="card">
 
-  <div class="validation">
-    Verifying Identity Chain (VBS-CA)...
-    <div class="progress"><span></span></div>
-  </div>
-
-  <div class="content">
-    
-    <div class="header-grid">
-      <div>
-        <h1>Miguel Prada</h1>
-        <p class="subtitle">CEO & Founder</p>
-        <p class="subtitle" style="color:var(--accent); margin-top:4px;">Violet Bridge Security LLC</p>
+    <div class="card-face card-front">
+      <div class="logo-container">
+        <img src="https://raw.githubusercontent.com/Violet-Bridge-Security-LLC/Digital-Business-Card/7d349bf9650f0ea34e302517db0540f4a844b053/VBS-logo.png" alt="Violet Bridge Security" class="logo-img">
       </div>
-      <img src="./foto.jpg" alt="Profile" class="profile-pic">
+      <div class="tap-hint">[ Tap to Verify Identity ]</div>
     </div>
 
-    <div class="section">
-      <div class="label">Professional Credentials</div>
-      <div class="kv">
-        <div class="key">Education</div>
-        <div class="value">NYU Alumni (Cybersecurity)</div>
-
-        <div class="key">Certification</div>
-        <div class="value">CISSP Verified</div>
-
-        <div class="key">Experience</div>
-        <div class="value">9+ Years Active Duty</div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="label">Subject History (Former)</div>
-      <div class="tags">
-        <span>Netskope</span>
-        <span>Skyhigh Security</span>
-        <span>McAfee</span>
-        <span>Cisco</span>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="label">Technology Partners (Trusted Roots)</div>
-      <div class="kv">
-        <div class="key">SASE/SSE</div>
-        <div><a href="https://www.catonetworks.com" target="_blank" class="partner-link">Cato Networks</a></div>
-
-        <div class="key">Simulation</div>
-        <div><a href="https://arsen.co" target="_blank" class="partner-link">Arsen Security</a></div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <a class="btn btn-primary full-width" href="./vCard.vcf">
-        📥 Save Contact (iOS/Android)
-      </a>
-
-      <a class="btn" href="https://www.linkedin.com/in/mapradade/" target="_blank">
-        LinkedIn Profile
-      </a>
-
-      <a class="btn" href="tel:+13073409155">
-        Call Now
-      </a>
+    <div class="card-face card-back">
       
-      <a class="btn full-width" href="https://violetbridgesecurity.com/#why-vbs" target="_blank" style="border-style:dashed;">
-        📂 View Service Portfolio
-      </a>
+      <div class="validation">
+        Verifying Certificate Chain...
+        <div class="progress"><span class="progress-bar" id="progressBar"></span></div>
+      </div>
+
+      <div class="content">
+        
+        <div class="header-grid">
+          <div>
+            <h1>Miguel (Mike) Prada</h1>
+            <div class="role">CISSP, CEO & Founder</div>
+            <div class="company">Violet Bridge Security LLC</div>
+          </div>
+          <img src="https://raw.githubusercontent.com/Violet-Bridge-Security-LLC/Digital-Business-Card/5e50cef6fe18420db4150e2ad851f71481c9cc7c/foto.jpg" alt="Profile" class="profile-pic">
+        </div>
+
+        <div class="cert-section">
+          <div class="label">X.509 Certificate Details</div>
+          
+          <div class="field-row">
+            <div class="key">Certificate</div>
+            <div class="value">MS-CYB-NYU</div>
+          </div>
+          
+          <div class="field-row">
+            <div class="key">Organization (O)</div>
+            <div class="value">Violet Bridge Security LLC</div>
+          </div>
+
+          <div class="field-row">
+            <div class="key">Subject Alt. Name</div>
+            <div class="value">SASE Professional Services • Phishing Simulation • AI-powered Vishing</div>
+          </div>
+        </div>
+
+        <div class="cert-section">
+          <div class="label">Technology Partners (Trusted Roots)</div>
+          <div class="field-row">
+            <div class="key">SASE/SSE</div>
+            <div><a href="https://www.catonetworks.com" target="_blank" class="partner-link">Cato Networks</a></div>
+          </div>
+          <div class="field-row">
+            <div class="key">Security Awareness</div>
+            <div><a href="https://arsen.co" target="_blank" class="partner-link">Arsen Security</a></div>
+          </div>
+        </div>
+
+        <div class="cert-section">
+          <div class="label">Certificate Policy (Services)</div>
+          <div class="service-text">
+         	Global SASE Delivery, Phishing Simulations & Next-Gen Security Awareness. We deliver enterprise-level cybersecurity services led by 			senior engineers, helping B2B organizations move faster without increasing risk.
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="btn btn-primary full-width" href="https://raw.githubusercontent.com/Violet-Bridge-Security-LLC/Digital-Business-Card/5e50cef6fe18420db4150e2ad851f71481c9cc7c/vCard.vcf">
+            📥 Save Contact (iOS)
+          </a>
+          
+          <a class="btn" href="https://www.linkedin.com/company/violet-bridge-security" target="_blank">LinkedIn</a>
+          
+          <a class="btn" href="mailto:info@violetbridgesecurity.com?subject=Inquiry%20regarding%20SASE%20Services&body=Hi%20Violet%20Bridge%20Team%2C%0D%0A%0D%0AI%20am%20interested%20in%20your%20cybersecurity%20services.">
+            ✉️ Email Inquiry
+          </a>
+          
+          <a class="btn full-width" href="https://violetbridgesecurity.com/#why-vbs" target="_blank" style="border-style:dashed;">
+            📂 Audit Services Portfolio
+          </a>
+        </div>
+
+        <div class="fingerprint">
+          SHA256: 3A:91:F2:BC:44:9D:88:1F:AA:72:VBS:SEC:ID:20:26
+        </div>
+
+      </div>
     </div>
 
   </div>
-
-  <div class="footer">
-    SHA-256: 3A:91:F2:BC:44:9D:88:1F:AA:72:MP:SEC
-  </div>
-
 </div>
+
+<script>
+  const card = document.getElementById('card');
+  const progressBar = document.getElementById('progressBar');
+
+  card.addEventListener('click', function(e) {
+    // 1. Prevent flip if clicking a link/button
+    if (e.target.closest('a')) return;
+    
+    // 2. Toggle Flip
+    card.classList.toggle('is-flipped');
+    
+    // 3. Logic to restart animation every time
+    const isFlipped = card.classList.contains('is-flipped');
+    
+    if (isFlipped) {
+      progressBar.classList.remove('animate-progress');
+      void progressBar.offsetWidth; // Force Reflow
+      progressBar.classList.add('animate-progress');
+    } else {
+      progressBar.classList.remove('animate-progress');
+    }
+  });
+</script>
 
 </body>
 </html>
