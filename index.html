@@ -331,12 +331,13 @@ h1 { font-size: 17px; margin: 0; color: var(--vbs-white); }
         <div class="cert-section">
           <div class="label">Certificate Policy (Services)</div>
           <div class="service-text">
-         	Global SASE Delivery, Phishing Simulations & Next-Gen Security Awareness. We deliver enterprise-level cybersecurity services led by 			senior engineers, helping B2B organizations move faster without increasing risk.
+         	Global SASE Delivery, Phishing Simulations & Next-Gen Security Awareness. We deliver enterprise-level cybersecurity services led by senior engineers, helping B2B organizations move faster without increasing risk.
           </div>
         </div>
 
         <div class="actions">
-          <a class="btn btn-primary full-width" href="https://raw.githubusercontent.com/Violet-Bridge-Security-LLC/Digital-Business-Card/5e50cef6fe18420db4150e2ad851f71481c9cc7c/vCard.vcf">
+          
+          <a class="btn btn-primary full-width" href="./vCard.vcf">
             📥 Save Contact (iOS)
           </a>
           
@@ -366,18 +367,15 @@ h1 { font-size: 17px; margin: 0; color: var(--vbs-white); }
   const progressBar = document.getElementById('progressBar');
 
   card.addEventListener('click', function(e) {
-    // 1. Prevent flip if clicking a link/button
     if (e.target.closest('a')) return;
     
-    // 2. Toggle Flip
     card.classList.toggle('is-flipped');
     
-    // 3. Logic to restart animation every time
     const isFlipped = card.classList.contains('is-flipped');
     
     if (isFlipped) {
       progressBar.classList.remove('animate-progress');
-      void progressBar.offsetWidth; // Force Reflow
+      void progressBar.offsetWidth;
       progressBar.classList.add('animate-progress');
     } else {
       progressBar.classList.remove('animate-progress');
